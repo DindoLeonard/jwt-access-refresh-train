@@ -30,6 +30,7 @@ const handleNewUser = async (req, res) => {
       id: usersDB.users[usersDB.users.length - 1].id + 1 || 1,
       email,
       password: hashedPassword,
+      roles: { User: 2001 },
     };
 
     usersDB.setUsers([...usersDB.users, newUser]);

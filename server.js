@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const routes = require('./routes/routes');
-const res = require('express/lib/response');
+const allowedOrigins = require('./config/allowedOrigins');
+const corsOptions = require('./config/corsOptions');
 
 const PORT = process.env.PORT || 3500;
 
@@ -17,21 +18,6 @@ const user = [
 /**
  * CORS OPTIONS
  */
-// http://127.0.0.1:5500 is usually the port for liveserver
-const allowedOrigins = [
-  'https://www.yoursite.com',
-  'http://127.0.0.1:5500',
-  'http://localhost:3500',
-];
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (allowedOrigins.indexOf(origin) !== 1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-};
 /**
  * CREDENTIALS
  */
