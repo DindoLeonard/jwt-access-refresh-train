@@ -41,13 +41,13 @@ const handleLogin = async (req, res) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: '30s' }
+      { expiresIn: '20s' }
     );
 
     const refreshToken = jwt.sign(
       { id: foundUser.id, email: foundUser.email },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: '60s' }
     );
 
     // Saving refresh token with current user
@@ -64,7 +64,7 @@ const handleLogin = async (req, res) => {
     res.cookie('jwt', refreshToken, {
       httpOnly: true,
       sameSite: 'None',
-      // secure: true,  // set to true when you are in https
+      secure: true, // set to true when you are in https
       maxAge: 24 * 60 * 60 * 1000, // set cookie for 1 hour
     });
     res.json({ accessToken }); // should store this in memory
