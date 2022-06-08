@@ -1,9 +1,15 @@
+require('dotenv').config(); // initialize dotenv config
+
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const routes = require('./routes/routes');
 const allowedOrigins = require('./config/allowedOrigins');
 const corsOptions = require('./config/corsOptions');
+const credentials = require('./middleware/credentials');
+const { logger } = require('./middleware/logEvent');
+const connectDB = require('./config/dbConn');
+const mongoose = require('mongoose');
 
 const PORT = process.env.PORT || 3500;
 
@@ -21,17 +27,23 @@ const user = [
 /**
  * CREDENTIALS
  */
-const credentials = (req, res, next) => {
-  const origin = req.headers.origin;
+// const credentials = (req, res, next) => {
+//   const origin = req.headers.origin;
 
-  if (allowedOrigins.includes(origin)) {
-    res.header('Access-Control-Allow-Credentials', true);
-  }
+//   if (allowedOrigins.includes(origin)) {
+//     res.header('Access-Control-Allow-Credentials', true);
+//   }
 
-  next();
-};
+//   next();
+// };
 
 const app = express();
+
+// Connect to MongoDB
+connectDB();
+
+// custom middleware logger
+app.use(logger);
 
 // Handle options credentials check - before CORS!
 // and fetch cookies credentials requirement
@@ -62,6 +74,9 @@ app.use(function (err, req, res, next) {
   res.status(500).send(err.message);
 });
 
-app.listen(PORT, () => {
-  console.log('Server running on port ' + PORT);
+mongoose.connection.once('open', () => {
+  console.log('Connected to MongoDB');
+  app.listen(PORT, () => {
+    console.log('Server running on port ' + PORT);
+  });
 });
